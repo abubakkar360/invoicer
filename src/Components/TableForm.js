@@ -1,12 +1,18 @@
 import React, { useEffect } from 'react'
 import { v4 as uuidv4 } from 'uuid';
+import { MdDeleteOutline } from "react-icons/md";
+import { MdOutlineEdit } from "react-icons/md";
 export default function TableForm({
     description,setDescription,
     quantity,setQuantity,
     price,setPrice,
     amount,setAmount,
-    lists,setLists
+    lists,setLists,
+    isEditing,setIsEditing,
+    total,setTotal
 }){
+
+  // {calculate amount function }
 
   useEffect(()=>{
     const calculate = (amount)=>{
@@ -19,11 +25,14 @@ export default function TableForm({
     
     
   )
-  
+  // {submit function }
   const handleSubmit = (e)=>{
     e.preventDefault();
 
-    const newItems = {
+    if(!description||!quantity||!price){
+      alert('Please fill all the gap');
+    }else{
+      const newItems = {
       id:uuidv4(),
       description,
       quantity,
@@ -35,10 +44,49 @@ export default function TableForm({
     setPrice("")
     setAmount("")
     setLists([...lists,newItems])
-    console.log(lists)
+    setIsEditing(false)
+    // console.log(lists)
+    }
     
   }
+
+  // calculate total amount in table 
+  useEffect(()=>{
+    
+  let rows = document.querySelectorAll('.amount');
   
+  
+  let sum = 0;
+
+  for(let i = 0; i < rows.length; i++){
+   
+    if(rows[i].className === 'amount'){
+      sum += isNaN(rows[i].innerHTML) ? 0 : parseInt(rows[i].innerHTML)
+      console.log(sum);
+      
+      
+      setTotal(sum);
+    }
+  }
+  })
+    
+    // Edit function
+
+    const editRow = (id)=>{
+      const editingRow = lists.find((row)=>row.id===id);
+      setLists(lists.filter((row)=>row.id !== id))
+      setIsEditing(true);
+      setDescription(editingRow.description);
+      setQuantity(editingRow.quantity);
+      setPrice(editingRow.price);
+    }
+    
+    // delete function
+    
+    const deleteRow = (id) =>{
+      
+        setLists(lists.filter((row)=>row.id !== id))
+    }
   return (
     
     <>
@@ -101,7 +149,7 @@ export default function TableForm({
     transition-all 
     duration-300'
     >
-      Add Item</button>
+     {isEditing?'Edit Item':'Add Item'} </button>
     </form>
     {/* {table item } */}
     
@@ -121,13 +169,18 @@ export default function TableForm({
               <td>{description}</td>
               <td>{quantity}</td>
               <td>{price}</td>
-              <td>{amount}</td>
+              <td className='amount'>{amount}</td>
+              <td> <button className='text-red-800' type="" onClick={()=>deleteRow(id)}><MdDeleteOutline /></button></td>
+              <td> <button className='text-green-800' type="" onClick={()=>editRow(id)}><MdOutlineEdit /></button></td>
             </tr>
         </tbody>
         </React.Fragment>
       ))}
       </table>
-    
+
+      <div>        
+        <h2 className=' flex justify-end font-bold text-4xl '>TK. {total.toLocaleString()}</h2>
+      </div>
     {/* {end of table item } */}
     </>
   )

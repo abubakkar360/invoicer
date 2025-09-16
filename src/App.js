@@ -1,6 +1,6 @@
 // import react from "react";
 
-import { useState } from "react";
+import { useState,useRef } from "react";
 import ClientsDetails from "./Components/ClientsDetails";
 import Dates from "./Components/Dates";
 import Details from "./Components/Details";
@@ -9,24 +9,26 @@ import Header from "./Components/Header";
 import Notes from "./Components/Notes";
 import Tables from "./Components/Tables";
 import TableForm from "./Components/TableForm";
+// import ReactToPrint from "react-to-print";
+import { useReactToPrint } from "react-to-print";
 import "./index.css"
 
 
 function App() {
-  const [showInvoice,setShowInvoice]= useState(true);
-  const[name,setName]= useState("Md Abubakkar");
-  const[email,setEmail]= useState("Abubakkarmd536@gmail.com");
-  const[address,setAddress]= useState("alakulipur,sitakund,chittagong");
-  const[clientName,setClientName]= useState("jone doe");
-  const[clientAddress,setClientAddress]= useState("13 No Sector 23, Dhaka");
-  const[invoiceNumber,setInvoiceNumber]= useState("001");
-  const[invoiceDate,setInvoiceDate]= useState("2025-09-10");
-  const[dueDate,setDueDate]= useState("2025-09-18");
-  const[notes,setNotes]= useState("this is my project");
-  const[phoneNumber,setPhoneNumber]= useState("0123654987");
-  const[bank,setBank]= useState("ibbl");
-  const[bankAccountNumber,setBankAccountNumber]= useState("123 456 789");
-  const[website,setWebsite]= useState("website.com");
+  const [showInvoice,setShowInvoice]= useState(false);
+  const[name,setName]= useState("");
+  const[email,setEmail]= useState("");
+  const[address,setAddress]= useState("");
+  const[clientName,setClientName]= useState("");
+  const[clientAddress,setClientAddress]= useState("");
+  const[invoiceNumber,setInvoiceNumber]= useState("");
+  const[invoiceDate,setInvoiceDate]= useState("");
+  const[dueDate,setDueDate]= useState("");
+  const[notes,setNotes]= useState("");
+  const[phoneNumber,setPhoneNumber]= useState("");
+  const[bank,setBank]= useState("");
+  const[bankAccountNumber,setBankAccountNumber]= useState("");
+  const[website,setWebsite]= useState("");
   
   const[description,setDescription]= useState("")
   const[quantity,setQuantity]= useState("")
@@ -34,14 +36,37 @@ function App() {
   const[amount,setAmount]= useState("")
 
   const[lists,setLists]=useState([]);
-  
-  const handlePrint= ()=>{
-    window.print();
+
+  const[isEditing,setIsEditing]= useState(false);
+
+  const [total,setTotal]=useState(0);
+
+  const contentRef = useRef();
+  const reactToPrint = useReactToPrint({contentRef});
+
+  const handlePrint = ()=>{
+    window.print()
   }
+  
   return (
     <>  
       <main className="m-5 p-5 md:max-w-xl md:mx-auto lg:max-w-xl lg:mx-auto xl:max-w-4xl bg-white rounded shadow">
-      { showInvoice ? (<div>
+      
+      { showInvoice ? (
+        <>
+        <button type="" onClick={reactToPrint}className="font-bold 
+      bg-blue-500 
+      text-white
+      capitalize
+      py-2 px-8 
+      rounded shadow 
+      border-2 
+      border-blue-500 
+      hover:bg-transparent 
+      hover:text-blue-500 
+      transition-all 
+      duration-300">print / download</button>
+        <div ref={contentRef} className="m-5">
         <Header handlePrint={handlePrint}/>            
         <Details 
         name = {name} 
@@ -62,8 +87,11 @@ function App() {
         // quantity={quantity}
         // price={price}
         // amount={amount}
+
         lists={lists}
         setLists={setLists}
+        total={total}
+        setTotal={setTotal}
         /> 
 
         <Notes notes={notes}/> 
@@ -77,15 +105,22 @@ function App() {
         bankAccountNumber={bankAccountNumber} 
         website={website} 
         />
-              <button onClick={()=>{setShowInvoice(false)}} type="" className="font-bold bg-blue-500 text-white py-2 px-8 rounded shadow border-2 border-blue-500 hover:bg-transparent hover:text-blue-500 transition-all duration-300">Edit Information</button>
 
-      </div>) : ( 
+      </div>
+      <button onClick={()=>{setShowInvoice(false)}} type="" className="font-bold bg-blue-500 text-white py-2 px-8 rounded shadow border-2 border-blue-500 hover:bg-transparent hover:text-blue-500 transition-all duration-300">Edit Information</button>
+
+      </>
+      ) : ( 
         <>
         {/* {name,address,client's name, client address 
         invoice number, invoice date, due date,notes,
          ph number, bank, bank a/c, website  } 
          */}
         <div className="flex flex-col justify-center">
+
+          <div className="flex justify-center mb-15">
+            <h1 className="font-bold text-4xl border-b-4">Write your invoice</h1>
+          </div>
 
         <article className="md:grid grid-cols-2 gap-10">
 
@@ -269,6 +304,10 @@ function App() {
           setAmount={setAmount}
           lists={lists}
           setLists={setLists}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+          total={total}
+          setTotal={setTotal}
           />
 
         <label htmlFor="notes">Additional notes</label>

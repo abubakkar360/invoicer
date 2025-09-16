@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function Tables({lists}) {
+export default function Tables({lists,total}) {
   return (
     <>
       <table width="100%" className=''>
@@ -22,12 +22,16 @@ export default function Tables({lists}) {
                   <td>{list.quantity}</td>
                   <td>{list.price}</td>
                   <td>{list.amount}</td>
+                  
                 </React.Fragment>
                 
             </tr>
               ))}
         </tbody>
       </table>
+      <div>
+        <h2 className='font-bold text-gray-800 text-4xl mt-10 flex justify-end '>TK. {total.toLocaleString()}</h2>
+      </div>
     </>
   )
 }
